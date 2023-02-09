@@ -1,16 +1,22 @@
 
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter_firebase_login/app/bloc_observer.dart';
+
+import 'app/view/app.dart';
 
 
-void main() {
-  runApp(const MyApp());
-}
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Bloc.observer = const AppBlocObserver();
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  await Firebase.initializeApp();
 
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
+  final authenticationRepository = AuthenticationRepository();
+  await authenticationRepository.user.first;
+
+  runApp(App(authenticationRepository: authenticationRepository));
 }
